@@ -6,6 +6,27 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QJsonObject>
+#include <algorithm>
+
+// ---------- String Sort Json Array ----------
+bool compareJsonObjects(const QJsonValue &v1, const QJsonValue &v2)
+{
+    return v1.toObject().value("id").toInt() < v2.toObject().value("id").toInt();
+}
+
+QJsonArray sortJsonArray(const QJsonArray &array)
+{
+    QList<QJsonValue> list;
+    for (const QJsonValue &value : array) list.append(value);
+
+    std::sort(list.begin(), list.end(), compareJsonObjects);
+
+    QJsonArray sortedArray;
+    for (const QJsonValue &value : list) sortedArray.append(value);
+
+    return sortedArray;
+}
+// ---------- Ending Sort Json Array ----------
 
 MindmapScene::MindmapScene(QObject* parent): QGraphicsScene (parent), _lastNodeId(0), _selectedNode(nullptr)
 {
@@ -30,6 +51,11 @@ QString MindmapScene::toJSON() const
         arr.append(node.second->toJSON());
     }
 
+    QJsonObject obj;
+    int _id = _selectedNode->getNodeId();
+    obj["selectedID"] = _id;
+    arr.append(obj);
+
     QJsonDocument doc(arr);
 
     return QString(doc.toJson(QJsonDocument::Compact));
@@ -38,10 +64,13 @@ QString MindmapScene::toJSON() const
 void MindmapScene::fromJSON(const QString &json)
 {
     //clear();
-
+    reset();
     QJsonDocument obj = QJsonDocument::fromJson(json.toUtf8());
+    QJsonArray unsortedArray = obj.array();
+    int selectedNodeID = unsortedArray.last()["selectedID"].toInt();
+    unsortedArray.removeLast();
 
-    for (const auto node: obj.array())
+    for (const auto node: sortJsonArray(unsortedArray))
     {
         auto newNode = addNode();
         newNode->fromJSON(node.toObject());
@@ -49,9 +78,10 @@ void MindmapScene::fromJSON(const QString &json)
 
     for (const auto& node: _nodes)
     {
+        if (node.second.get()->getNodeId() == selectedNodeID) selectionChanged(node.second.get());
         node.second->resize();
         nodePositionChanged(node.second.get());
-    }
+    }  
 }
 
 MindmapNode *MindmapScene::addNode()

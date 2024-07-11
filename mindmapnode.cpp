@@ -37,6 +37,11 @@ size_t MindmapNode::getNodeId() const
     return _nodeId;
 }
 
+void MindmapNode::setNodeId(const size_t &id)
+{
+    _nodeId = id;
+}
+
 QJsonValue MindmapNode::toJSON() const
 {
     QJsonObject json;
@@ -70,6 +75,7 @@ void MindmapNode::fromJSON(const QJsonObject &jsonObject)
     setRect(x, y, w, h);
     _textContainer->setPos(sceneBoundingRect().x(), sceneBoundingRect().y());
 
+    setNodeId(jsonObject["id"].toInt());
     setContent(jsonObject["content"].toString());
     setDescription(jsonObject["description"].toString());
 

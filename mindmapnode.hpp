@@ -31,6 +31,7 @@ public:
                 const QFont& font);
 
     size_t getNodeId() const;
+    void setNodeId(const size_t& id);
 
     QJsonValue toJSON() const;
     void fromJSON(const QJsonObject& jsonObject);
