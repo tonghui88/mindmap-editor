@@ -134,6 +134,16 @@ int MindmapScene::getNodeCount() const
     return _nodes.size();
 }
 
+QVector<int> MindmapScene::getNodeIDs() const
+{
+    QVector<int> ids;
+    for (const auto& node: _nodes)
+    {
+        ids.push_back(node.second->getNodeId());
+    }
+    return ids;
+}
+
 void MindmapScene::reset()
 {
     _nodes.clear();
@@ -178,6 +188,17 @@ void MindmapScene::nodeDoubleClick(MindmapNode *node)
 {
     // pass-through signal to main window
     emit passNodeDoubleClick(node);
+}
+
+void MindmapScene::swapNodeIDs(int _old, int _new)
+{
+    for (const auto& node: _nodes)
+    {
+        if (node.second->getNodeId() == _new) node.second->setNodeId(_old);
+    }
+    _selectedNode->setNodeId(_new);
+    QString currentData = toJSON();
+    fromJSON(currentData);
 }
 
 void MindmapScene::changeNodeContent(MindmapNode* node, const QString& content)

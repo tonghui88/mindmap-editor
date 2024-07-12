@@ -2,6 +2,7 @@
 #define MINDMAPSCENE_HPP
 
 #include <QGraphicsScene>
+#include <QVector>
 #include <unordered_map>
 #include <memory>
 #include "mindmapnode.hpp"
@@ -35,6 +36,7 @@ public:
     MindmapNode* addNode(const QString& content);
     MindmapNode* getNodeById(const size_t id) const;
     int getNodeCount() const;
+    QVector<int> getNodeIDs() const;
     void removeSelectedNodes();
     void changeNodeContent(MindmapNode* node, const QString& content);
 
@@ -44,6 +46,7 @@ public slots:
     void nodePositionChanged(MindmapNode* node);
     void selectionChanged(MindmapNode* node);
     void nodeDoubleClick(MindmapNode* node);
+    void swapNodeIDs(int _old, int _new);
 
 signals:
     void passNodeDoubleClick(MindmapNode* node);

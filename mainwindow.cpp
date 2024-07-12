@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QKeyEvent>
+#include <QVector>
 
 MainWindow::MainWindow(QWidget *parent) :
                                           QMainWindow(parent),
@@ -39,7 +40,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::passNodeDoubleClick(MindmapNode *node)
 {
-    EditNodeDialog *editNode = new EditNodeDialog(this, node);
+    QVector<int> ids = _mindmapScene->getNodeIDs();
+    qSort(ids);
+
+    EditNodeDialog *editNode = new EditNodeDialog(this, node, ids);
+    connect(editNode, &EditNodeDialog::nodeIDChanged, _mindmapScene, &MindmapScene::swapNodeIDs);
     editNode->exec();
 
     emit notifyMindmapChanged(false);

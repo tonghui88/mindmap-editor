@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QInputDialog>
+#include <QVector>
 #include "mindmapnode.hpp"
 
 namespace Ui {
@@ -14,7 +15,7 @@ class EditNodeDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit EditNodeDialog(QWidget *parent = nullptr, MindmapNode *node = nullptr);
+    explicit EditNodeDialog(QWidget *parent = nullptr, MindmapNode *node = nullptr, QVector<int> ids = QVector<int>());
     ~EditNodeDialog();
     MindmapNode *currentNode;
 
@@ -37,6 +38,9 @@ private slots:
 
 private:
     Ui::EditNodeDialog *ui;
+
+signals:
+    void nodeIDChanged(int _old, int _new);
 };
 
 #endif // EDITNODEDIALOG_HPP

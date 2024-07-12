@@ -2,7 +2,7 @@
 #include "ui_editnodedialog.h"
 #include <qdebug.h>
 
-EditNodeDialog::EditNodeDialog(QWidget *parent, MindmapNode *node) :
+EditNodeDialog::EditNodeDialog(QWidget *parent, MindmapNode *node, QVector<int> ids) :
     QDialog(parent),
     ui(new Ui::EditNodeDialog)
 {
@@ -14,6 +14,8 @@ EditNodeDialog::EditNodeDialog(QWidget *parent, MindmapNode *node) :
     ui->no_list->addItems(node->getNoList());
     ui->maybe_list->addItems(node->getMaybeList());
     ui->description_edit->setText(node->getDescription());
+    ui->node_number_combo_box->addItem(QString::number(node->getNodeId()));
+    for (int i = 0; i < ids.length(); i++) if (ids[i] != node->getNodeId()) ui->node_number_combo_box->addItem(QString::number(ids[i]));
 }
 
 EditNodeDialog::~EditNodeDialog()
@@ -75,6 +77,8 @@ void EditNodeDialog::on_buttonBox_accepted()
     temp.clear();
     for (int i = 0; i < ui->maybe_list->count(); i++) temp << ui->maybe_list->item(i)->text();
     currentNode->setMaybeList(temp);
+    const int updateID = ui->node_number_combo_box->currentText().toInt();
+    if (updateID != currentNode->getNodeId()) emit nodeIDChanged(currentNode->getNodeId(), updateID);
 }
 
 
