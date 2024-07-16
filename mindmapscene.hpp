@@ -35,6 +35,7 @@ public:
     MindmapNode* addNode();
     MindmapNode* addNode(const QString& content);
     MindmapNode* getNodeById(const size_t id) const;
+    MindmapNode* _getNodeById(const size_t id) const;
     int getNodeCount() const;
     QVector<int> getNodeIDs() const;
     void removeSelectedNodes();

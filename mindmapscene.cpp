@@ -43,7 +43,7 @@ MindmapScene::MindmapScene(QObject* parent): QGraphicsScene (parent), _lastNodeI
 }
 
 QString MindmapScene::toJSON() const
-{
+{   
     QJsonArray arr;
 
     for (const auto& node: _nodes)
@@ -52,8 +52,18 @@ QString MindmapScene::toJSON() const
     }
 
     QJsonObject obj;
+
     int _id = _selectedNode->getNodeId();
     obj["selectedID"] = _id;
+
+    QStringList _nodeConnector;
+    for (const auto& it: _nodeConnectors) {
+        _nodeConnector.append(QString::fromUtf8(it.first.data()));
+    }
+
+    QJsonArray jsonArray;
+    jsonArray = QJsonArray::fromStringList(_nodeConnector);
+    obj["nodeConnector"] = jsonArray;
     arr.append(obj);
 
     QJsonDocument doc(arr);
@@ -65,10 +75,16 @@ void MindmapScene::fromJSON(const QString &json)
 {
     //clear();
     reset();
+
     QJsonDocument obj = QJsonDocument::fromJson(json.toUtf8());
     QJsonArray unsortedArray = obj.array();
-    int selectedNodeID = unsortedArray.last()["selectedID"].toInt();
+    QJsonValue lastNode = unsortedArray.last();
     unsortedArray.removeLast();
+
+    QJsonArray jsonArray = lastNode["nodeConnector"].toArray();
+    QStringList stringList;
+    stringList.clear();
+    for (const QJsonValue &value : jsonArray) stringList.append(value.toString());
 
     for (const auto node: sortJsonArray(unsortedArray))
     {
@@ -78,10 +94,18 @@ void MindmapScene::fromJSON(const QString &json)
 
     for (const auto& node: _nodes)
     {
-        if (node.second.get()->getNodeId() == selectedNodeID) selectionChanged(node.second.get());
+        if (node.second.get()->getNodeId() == lastNode["selectedID"].toInt()) selectionChanged(node.second.get());
         node.second->resize();
         nodePositionChanged(node.second.get());
-    }  
+    }
+
+    _nodeConnectors.clear();
+
+    for (const QString& item : stringList) {
+        const int _from = item.split("_").at(0).toInt();
+        const int _to = item.split("_").at(1).toInt();
+        _addEdge(_getNodeById(_from), _getNodeById(_to));
+    }
 }
 
 MindmapNode *MindmapScene::addNode()
@@ -127,6 +151,15 @@ MindmapNode *MindmapScene::addNode(const QString& content)
 MindmapNode *MindmapScene::getNodeById(const size_t id) const
 {
     return (_nodes.at(id)) ? _nodes.at(id).get() : nullptr;
+}
+
+MindmapNode *MindmapScene::_getNodeById(const size_t id) const
+{
+    for (const auto& node: _nodes) {
+        if (node.second->getNodeId() == id) return node.second.get();
+    }
+
+    return nullptr;
 }
 
 int MindmapScene::getNodeCount() const
