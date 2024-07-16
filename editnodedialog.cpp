@@ -26,7 +26,9 @@ EditNodeDialog::~EditNodeDialog()
 void EditNodeDialog::on_yes_add_clicked()
 {
     auto newItem = QInputDialog::getText(this, "Content", "Set content of the list item", QLineEdit::Normal);
-    ui->yes_list->addItem(newItem);
+    QListWidgetItem *listItem = new QListWidgetItem(newItem);
+    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable);
+    ui->yes_list->addItem(listItem);
 }
 
 
@@ -39,7 +41,9 @@ void EditNodeDialog::on_yes_remove_clicked()
 void EditNodeDialog::on_no_add_clicked()
 {
     auto newItem = QInputDialog::getText(this, "Content", "Set content of the list item", QLineEdit::Normal);
-    ui->no_list->addItem(newItem);
+    QListWidgetItem *listItem = new QListWidgetItem(newItem);
+    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable);
+    ui->no_list->addItem(listItem);
 }
 
 
@@ -52,7 +56,9 @@ void EditNodeDialog::on_no_remove_clicked()
 void EditNodeDialog::on_maybe_add_clicked()
 {
     auto newItem = QInputDialog::getText(this, "Content", "Set content of the list item", QLineEdit::Normal);
-    ui->maybe_list->addItem(newItem);
+    QListWidgetItem *listItem = new QListWidgetItem(newItem);
+    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable);
+    ui->maybe_list->addItem(listItem);
 }
 
 
