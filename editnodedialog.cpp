@@ -10,9 +10,33 @@ EditNodeDialog::EditNodeDialog(QWidget *parent, MindmapNode *node, QVector<int> 
     setWindowTitle("Content of Node");
     currentNode = node;
     ui->title_edit->setText(node->getContent());
-    ui->yes_list->addItems(node->getYesList());
-    ui->no_list->addItems(node->getNoList());
-    ui->maybe_list->addItems(node->getMaybeList());
+    ui->yes_list->setDragEnabled(true);
+    ui->yes_list->setAcceptDrops(true);
+    ui->yes_list->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->yes_list->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    for (const auto& item: node->getYesList()) {
+        QListWidgetItem *listItem = new QListWidgetItem(item);
+        listItem->setFlags(listItem->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+        ui->yes_list->addItem(listItem);
+    }
+    ui->no_list->setDragEnabled(true);
+    ui->no_list->setAcceptDrops(true);
+    ui->no_list->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->no_list->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    for (const auto& item: node->getNoList()) {
+        QListWidgetItem *listItem = new QListWidgetItem(item);
+        listItem->setFlags(listItem->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+        ui->no_list->addItem(listItem);
+    }
+    ui->maybe_list->setDragEnabled(true);
+    ui->maybe_list->setAcceptDrops(true);
+    ui->maybe_list->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->maybe_list->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    for (const auto& item: node->getMaybeList()) {
+        QListWidgetItem *listItem = new QListWidgetItem(item);
+        listItem->setFlags(listItem->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+        ui->maybe_list->addItem(listItem);
+    }
     ui->description_edit->setText(node->getDescription());
     ui->node_number_combo_box->addItem(QString::number(node->getNodeId()));
     for (int i = 0; i < ids.length(); i++) if (ids[i] != node->getNodeId()) ui->node_number_combo_box->addItem(QString::number(ids[i]));
@@ -27,7 +51,7 @@ void EditNodeDialog::on_yes_add_clicked()
 {
     auto newItem = QInputDialog::getText(this, "Content", "Set content of the list item", QLineEdit::Normal);
     QListWidgetItem *listItem = new QListWidgetItem(newItem);
-    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable);
+    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
     ui->yes_list->addItem(listItem);
 }
 
@@ -42,7 +66,7 @@ void EditNodeDialog::on_no_add_clicked()
 {
     auto newItem = QInputDialog::getText(this, "Content", "Set content of the list item", QLineEdit::Normal);
     QListWidgetItem *listItem = new QListWidgetItem(newItem);
-    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable);
+    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
     ui->no_list->addItem(listItem);
 }
 
@@ -57,7 +81,7 @@ void EditNodeDialog::on_maybe_add_clicked()
 {
     auto newItem = QInputDialog::getText(this, "Content", "Set content of the list item", QLineEdit::Normal);
     QListWidgetItem *listItem = new QListWidgetItem(newItem);
-    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable);
+    listItem->setFlags(listItem->flags() | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
     ui->maybe_list->addItem(listItem);
 }
 
