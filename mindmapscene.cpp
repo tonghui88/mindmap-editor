@@ -225,13 +225,27 @@ void MindmapScene::nodeDoubleClick(MindmapNode *node)
 
 void MindmapScene::swapNodeIDs(int _old, int _new)
 {
+    QString _content = _selectedNode->getContent();
+    QStringList _yesList = _selectedNode->getYesList();
+    QStringList _noList = _selectedNode->getNoList();
+    QStringList _maybeList = _selectedNode->getMaybeList();
+    QString _description = _selectedNode->getDescription();
     for (const auto& node: _nodes)
     {
-        if (node.second->getNodeId() == _new) node.second->setNodeId(_old);
+        if (node.second->getNodeId() == _new) {
+            _selectedNode->setContent(node.second->getContent());
+            _selectedNode->setYesList(node.second->getYesList());
+            _selectedNode->setNoList(node.second->getNoList());
+            _selectedNode->setMaybeList(node.second->getMaybeList());
+            _selectedNode->setDescription(node.second->getDescription());
+            node.second->setContent(_content);
+            node.second->setYesList(_yesList);
+            node.second->setNoList(_noList);
+            node.second->setMaybeList(_maybeList);
+            node.second->setDescription(_description);
+            break;
+        }
     }
-    _selectedNode->setNodeId(_new);
-    QString currentData = toJSON();
-    fromJSON(currentData);
 }
 
 void MindmapScene::changeNodeContent(MindmapNode* node, const QString& content)
